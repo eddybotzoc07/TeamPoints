@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Canjear premios";
+}
+<h1>Canjear premios</h1>
+<p>Balance actual: <strong>@ViewBag.Balance</strong></p>
+@if (TempData["Error"] != null){<div class="alert alert-danger">@TempData["Error"]</div>}
+@if (TempData["Ok"] != null){<div class="alert alert-success">@TempData["Ok"]</div>}
+<table class="table">
+<thead><tr><th>Premio</th><th>Costo</th><th></th></tr></thead>
+<tbody>
+@foreach (var p in (IEnumerable<TeamPoints.Models.Premio>)ViewBag.Premios){
+<tr>
+    <td>@p.Nombre</td>
+    <td>@p.CostoPuntos</td>
+    <td>
+        <form asp-action="Canjear" method="post">
+            <input type="hidden" name="premioId" value="@p.Id" />
+            <button class="btn btn-sm btn-success" type="submit">Canjear</button>
+        </form>
+    </td>
+</tr>
+}
+</tbody>
+</table>

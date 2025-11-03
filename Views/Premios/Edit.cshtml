@@ -1,0 +1,17 @@
+@model TeamPoints.Models.Premio
+<h1>Editar Premio</h1>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CostoPuntos" class="form-label"></label>
+        <input asp-for="CostoPuntos" class="form-control" />
+        <span asp-validation-for="CostoPuntos" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>

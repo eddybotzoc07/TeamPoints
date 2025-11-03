@@ -1,0 +1,16 @@
+@model IEnumerable<TeamPoints.Controllers.LeaderboardVm>
+@{
+    ViewData["Title"] = "Leaderboard semanal";
+}
+<h1>Leaderboard semanal</h1>
+<table class="table">
+<thead><tr><th>Usuario</th><th>Puntos</th></tr></thead>
+<tbody>
+@foreach (var r in Model){
+<tr>
+<td>@r.UsuarioId</td>
+<td>@r.Puntos</td>
+</tr>
+}
+</tbody>
+</table>

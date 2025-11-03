@@ -1,0 +1,21 @@
+@model IEnumerable<TeamPoints.Models.Premio>
+@{
+    ViewData["Title"] = "Premios";
+}
+<h1>Premios</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nuevo</a></p>
+<table class="table">
+<thead><tr><th>Nombre</th><th>Costo</th><th></th></tr></thead>
+<tbody>
+@foreach (var item in Model){
+<tr>
+<td>@item.Nombre</td>
+<td>@item.CostoPuntos</td>
+<td>
+    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+    <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+</td>
+</tr>
+}
+</tbody>
+</table>

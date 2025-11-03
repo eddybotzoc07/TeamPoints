@@ -1,0 +1,16 @@
+@model TeamPoints.Models.ViewModels.AsignarPuntosVm
+@{
+    ViewData["Title"] = "Asignar puntos";
+}
+<h1>Asignar puntos</h1>
+<form asp-action="Asignar" method="post">
+    <div class="mb-3">
+        <label class="form-label">Usuario</label>
+        <select asp-for="UsuarioId" class="form-select" asp-items="Model.Usuarios"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Logro</label>
+        <select asp-for="LogroId" class="form-select" asp-items="Model.Logros"></select>
+    </div>
+    <button class="btn btn-primary" type="submit">Asignar</button>
+</form>

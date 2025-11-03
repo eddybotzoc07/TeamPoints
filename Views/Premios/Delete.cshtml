@@ -1,0 +1,8 @@
+@model TeamPoints.Models.Premio
+<h1>Eliminar Premio</h1>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>¿Seguro de eliminar el premio <strong>@Model.Nombre</strong>?</p>
+    <button class="btn btn-danger" type="submit">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

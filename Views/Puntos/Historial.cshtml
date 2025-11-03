@@ -1,0 +1,19 @@
+@model IEnumerable<TeamPoints.Models.TransaccionPuntos>
+@{
+    ViewData["Title"] = "Historial de Puntos";
+}
+<h1>Historial</h1>
+<p>Balance actual: <strong>@ViewBag.Balance</strong></p>
+<table class="table">
+<thead><tr><th>Fecha</th><th>Tipo</th><th>Puntos</th><th>Referencia</th></tr></thead>
+<tbody>
+@foreach (var t in Model){
+<tr>
+<td>@t.Fecha.ToLocalTime()</td>
+<td>@t.Tipo</td>
+<td>@t.Puntos</td>
+<td>@t.Ref</td>
+</tr>
+}
+</tbody>
+</table>

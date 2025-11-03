@@ -1,0 +1,8 @@
+@model TeamPoints.Models.Logro
+<h1>Eliminar Logro</h1>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>¿Seguro de eliminar el logro <strong>@Model.Nombre</strong>?</p>
+    <button class="btn btn-danger" type="submit">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
