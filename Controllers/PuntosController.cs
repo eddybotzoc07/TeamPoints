@@ -97,26 +97,48 @@ namespace TeamPoints.Controllers
         public async Task<IActionResult> Historial(string? usuarioId = null)
         {
             usuarioId ??= _userManager.GetUserId(User)!;
-            var txs = await _context.Transacciones
+
+            // Mapear la referencia a un nombre legible cuando sea LOGRO:{id} o PREMIO:{id}
+            var txsRaw = await _context.Transacciones
                 .Where(t => t.UsuarioId == usuarioId)
                 .OrderByDescending(t => t.Fecha)
                 .ToListAsync();
-            ViewBag.Balance = await ObtenerBalance(usuarioId);
-            return View(txs);
-        }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> Leaderboard()
-        {
-            var since = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek); // start of week (Sunday)
-            var leaderboard = await _context.Transacciones
-                .Where(t => t.Tipo == TipoTransaccion.Ganar && t.Fecha >= since)
-                .GroupBy(t => t.UsuarioId)
-                .Select(g => new LeaderboardVm { UsuarioId = g.Key, Puntos = g.Sum(x => x.Puntos) })
-                .OrderByDescending(x => x.Puntos)
-                .Take(10)
-                .ToListAsync();
-            return View(leaderboard);
+            var logroIds = txsRaw.Where(t => t.Ref != null && t.Ref.StartsWith("LOGRO:")).
+                Select(t => int.TryParse(t.Ref!.Split(':')[1], out var id) ? id : (int?)null)
+                .Where(id => id.HasValue).Select(id => id!.Value).Distinct().ToList();
+            var premioIds = txsRaw.Where(t => t.Ref != null && t.Ref.StartsWith("PREMIO:")).
+                Select(t => int.TryParse(t.Ref!.Split(':')[1], out var id) ? id : (int?)null)
+                .Where(id => id.HasValue).Select(id => id!.Value).Distinct().ToList();
+
+            var logros = await _context.Logros.Where(l => logroIds.Contains(l.Id)).ToDictionaryAsync(l => l.Id, l => l.Nombre);
+            var premios = await _context.Premios.Where(p => premioIds.Contains(p.Id)).ToDictionaryAsync(p => p.Id, p => p.Nombre);
+
+            string? MapRef(string? r)
+            {
+                if (string.IsNullOrWhiteSpace(r)) return r;
+                var parts = r.Split(':');
+                if (parts.Length != 2) return r; // referencia libre
+                var tag = parts[0];
+                if (!int.TryParse(parts[1], out var id)) return r;
+                return tag switch
+                {
+                    "LOGRO" => logros.TryGetValue(id, out var ln) ? ln : r,
+                    "PREMIO" => premios.TryGetValue(id, out var pn) ? pn : r,
+                    _ => r
+                };
+            }
+
+            var vm = txsRaw.Select(t => new TransaccionHistorialVm
+            {
+                Fecha = t.Fecha,
+                Tipo = t.Tipo,
+                Puntos = t.Puntos,
+                Referencia = MapRef(t.Ref)
+            }).ToList();
+
+            ViewBag.Balance = await ObtenerBalance(usuarioId);
+            return View(vm);
         }
 
         private async Task<int> ObtenerBalance(string usuarioId)
@@ -125,11 +147,35 @@ namespace TeamPoints.Controllers
             var canjeados = await _context.Transacciones.Where(t => t.UsuarioId == usuarioId && t.Tipo == TipoTransaccion.Canjear).SumAsync(t => (int?)t.Puntos) ?? 0;
             return ganados - canjeados;
         }
+
+        [AllowAnonymous]
+        [HttpGet("/Puntos/Leaderboard")] // ruta explícita para evitar problemas de ruteo en producción
+        public async Task<IActionResult> Leaderboard()
+        {
+            var since = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
+            var users = _context.Set<IdentityUser>();
+
+            var leaderboard = await _context.Transacciones
+                .Where(t => t.Tipo == TipoTransaccion.Ganar && t.Fecha >= since)
+                .GroupBy(t => t.UsuarioId)
+                .Select(g => new { UsuarioId = g.Key, Puntos = g.Sum(x => x.Puntos) })
+                .Join(users, g => g.UsuarioId, u => u.Id, (g, u) => new LeaderboardVm
+                {
+                    UsuarioId = g.UsuarioId,
+                    Usuario = u.Email ?? u.UserName ?? g.UsuarioId,
+                    Puntos = g.Puntos
+                })
+                .OrderByDescending(x => x.Puntos)
+                .Take(10)
+                .ToListAsync();
+            return View(leaderboard);
+        }
     }
 
     public class LeaderboardVm
     {
         public string UsuarioId { get; set; } = string.Empty;
+        public string Usuario { get; set; } = string.Empty;
         public int Puntos { get; set; }
     }
 }

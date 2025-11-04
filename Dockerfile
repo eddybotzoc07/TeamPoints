@@ -3,6 +3,12 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Zona horaria del contenedor (ajusta si usas otra)
+ENV TZ=America/Guatemala
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV ASPNETCORE_URLS=http://+:8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

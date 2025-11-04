@@ -2,15 +2,25 @@
 @{
     ViewData["Title"] = "Leaderboard semanal";
 }
-<h1>Leaderboard semanal</h1>
-<table class="table">
-<thead><tr><th>Usuario</th><th>Puntos</th></tr></thead>
-<tbody>
-@foreach (var r in Model){
-<tr>
-<td>@r.UsuarioId</td>
-<td>@r.Puntos</td>
-</tr>
-}
-</tbody>
-</table>
+<div class="card p-4 reveal">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 m-0">Leaderboard semanal</h1>
+        <span class="badge rounded-pill badge-soft">Top 10</span>
+    </div>
+    <table class="table table-hover table-striped align-middle">
+        <thead>
+            <tr><th>#</th><th>Usuario</th><th class="text-end">Puntos</th></tr>
+        </thead>
+        <tbody>
+        @{ var i = 1; }
+        @foreach (var r in Model){
+            <tr>
+                <td class="text-muted">@i</td>
+                <td>@r.Usuario</td>
+                <td class="text-end fw-semibold">@r.Puntos</td>
+            </tr>
+            i++;
+        }
+        </tbody>
+    </table>
+</div>

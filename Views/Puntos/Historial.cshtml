@@ -1,19 +1,29 @@
-@model IEnumerable<TeamPoints.Models.TransaccionPuntos>
+@model IEnumerable<TeamPoints.Models.ViewModels.TransaccionHistorialVm>
 @{
     ViewData["Title"] = "Historial de Puntos";
 }
-<h1>Historial</h1>
-<p>Balance actual: <strong>@ViewBag.Balance</strong></p>
-<table class="table">
-<thead><tr><th>Fecha</th><th>Tipo</th><th>Puntos</th><th>Referencia</th></tr></thead>
-<tbody>
-@foreach (var t in Model){
-<tr>
-<td>@t.Fecha.ToLocalTime()</td>
-<td>@t.Tipo</td>
-<td>@t.Puntos</td>
-<td>@t.Ref</td>
-</tr>
-}
-</tbody>
-</table>
+<div class="card p-4 reveal">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 m-0">Historial</h1>
+        <span class="text-muted">Balance actual: <strong class="text-warning">@ViewBag.Balance</strong></span>
+    </div>
+    <table class="table table-hover table-striped align-middle">
+        <thead><tr><th>Fecha</th><th>Tipo</th><th class="text-end">Puntos</th><th>Referencia</th></tr></thead>
+        <tbody>
+        @foreach (var t in Model){
+            <tr>
+                <td>@t.Fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    @if (t.Tipo.ToString()=="Ganar"){
+                        <span class="badge bg-success">Ganar</span>
+                    } else {
+                        <span class="badge bg-danger">Canjear</span>
+                    }
+                </td>
+                <td class="text-end fw-semibold">@t.Puntos</td>
+                <td>@t.Referencia</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

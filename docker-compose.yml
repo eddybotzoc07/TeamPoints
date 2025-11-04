@@ -5,6 +5,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Eddy123
       POSTGRES_DB: teampoints
+      TZ: America/Guatemala
     ports:
       - "5432:5432"
     volumes:
@@ -16,6 +17,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=teampoints;Username=postgres;Password=Eddy123
+      - TZ=America/Guatemala
     ports:
       - "8080:8080"
 volumes:

@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TeamPoints.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="page-enter">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TeamPoints</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -19,29 +19,15 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Puntos" asp-action="Leaderboard">Leaderboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Puntos" asp-action="Historial">Mi Historial</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Puntos" asp-action="Canjear">Canjear</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Puntos" asp-action="Leaderboard">Leaderboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Puntos" asp-action="Historial">Mi Historial</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Puntos" asp-action="Canjear">Canjear</a></li>
                         @if (User.IsInRole("Admin") || User.IsInRole("RH"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Puntos" asp-action="Asignar">Asignar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Logros" asp-action="Index">Logros</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Premios" asp-action="Index">Premios</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Puntos" asp-action="Asignar">Asignar</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Logros" asp-action="Index">Logros</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Premios" asp-action="Index">Premios</a></li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -50,18 +36,28 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 reveal">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <footer class="footer text-muted mt-4">
+        <div class="container py-3">
             &copy; 2025 - TeamPoints - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Reveal-on-load and on-scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('page-enter-active');
+            const observer = new IntersectionObserver((entries)=>{
+                entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+        });
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
